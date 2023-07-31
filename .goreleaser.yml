@@ -1,0 +1,38 @@
+# Goreleaser configuration
+# for building binaries and packages for distributions and releasing on github
+gitea_urls:
+  api: https://git.treesir.pub/api/v1
+  download: https://git.treesir.pub
+  # set to true if you use a self-signed certificate
+  skip_tls_verify: false
+
+dist: bin
+
+builds:
+  - binary: ssh-benchmark
+    env:
+      - CGO_ENABLED=0
+    main: main.go
+    goos:
+      - darwin
+      - linux
+      - freebsd
+    goarch:
+      - amd64
+    ignore:
+      - goos: darwin
+        goarch: 386
+
+archives:
+  -
+    format_overrides:
+      - goos: windows
+        format: zip
+    files:
+      - LICENSE
+      - config.json.template
+
+# release:
+#   # Do not auto publish release
+#   draft: true
+#   name_template: "{{.Tag}}"

@@ -1,0 +1,18 @@
+name: Release
+on:
+  push:
+    tags:
+      - v*
+
+jobs:
+  release:
+    runs-on: [ubuntu-latest]
+    steps:
+      - uses: actions/setup-go@v3
+        with: { go-version: 1.20 }
+      - run: go install github.com/go-task/task/v3/cmd/task@latest
+      - run: apt update && apt-get install zip
+      - uses: actions/checkout@v3
+      - run: task deps
+      - run:  git reset --hard
+      - run: GITHUB_TOKEN=${{ secrets.GH_TOKEN }} task release:prod
